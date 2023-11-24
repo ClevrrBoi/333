@@ -2,8 +2,8 @@ import random
 import time
 
 O = ["+", "-", "*"]
-MIN = 3
-MAX = 12
+MIN =  int(input('Enter minimum value: '))
+MAX =  int(input('Enter maximum value: '))
 TOTAL = int(input('Enter number of problems: '))
 
 
@@ -17,7 +17,7 @@ def problem():
     return expr, answer
 
 
-wrong = 0
+correct = 0
 input("Press enter to start!")
 print("----------------------")
 
@@ -28,12 +28,13 @@ for i in range(TOTAL):
     while True:
         d = input("Problem -" + str(i + 1) + ": " + expr + " = ")
         if d == str(answer):
+            correct += 1
             break
-        wrong += 1
+        continue
 
 t2 = time.time()
 total_time = round(t2 - t1, 2)
 
 print("----------------------")
 print("You finished in", total_time, "seconds!")
-print("accuracy=", (wrong / TOTAL) * 100)
+print("accuracy=", (correct / TOTAL) * 100)
