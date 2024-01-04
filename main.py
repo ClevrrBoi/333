@@ -1,29 +1,57 @@
-import random
 import time
 import os
 import json
+
+import questionary
 from openai import OpenAI
+from colorama import init
+from termcolor import colored
 
 client = OpenAI(
     api_key=os.environ.get("OPENAI_API_KEY"),
 )
 
-O = ["+", "-", "*"]
-MIN = int(input("Enter minimum value: "))
-MAX = int(input("Enter maximum value: "))
-TOTAL = int(input("Enter number of problems: "))
+init()
+
+
+num_of_questions = questionary.text(
+    "How many questions do you want to generate?",
+    validate=lambda val: int(val) > 0,
+).ask()
+
+difficulty = questionary.select(
+    "What difficulty do you want?",
+    choices=[
+        "Easy",
+        "Medium",
+        "Hard",
+    ],
+).ask()
+
+operations = questionary.checkbox(
+    "What operations do you want?",
+    choices=[
+        "+",
+        "-",
+        "*",
+        "/",
+        "^",
+        "sqrt",
+    ],
+).ask()
+
+
+print()
+print("----------------------")
+print()
 
 
 def problem():
-    # a = random.randint(MIN, MAX)
-    # b = random.randint(MIN, MAX)
-    # c = random.choice(O)
-
     chat_completion = client.chat.completions.create(
         messages=[
             {
                 "role": "user",
-                "content": f"Generate 1 maths question using numbers between {MIN} and {MAX}. Give the output in a json where one field is the question called 'question' and the other is the answer called 'answer'.",
+                "content": f"Generate 1 maths question using numbers between 1 and 100. Difficulty level is {difficulty} (easy - middle school level, medium - high school level, hard - high school level but harder). The operations the questions can include are: {','.join(operations)} Give the output in a json where one field is the question called 'question' and the other is the answer called 'answer'.",
             }
         ],
         model="gpt-3.5-turbo",
@@ -31,34 +59,32 @@ def problem():
 
     result = json.loads(chat_completion.choices[0].message.content)
 
-    print(result["question"], result["answer"])
-
     return result
 
-    # expr = str(a) + " " + c + " " + str(b)
-    # answer = eval(expr)
-    # return expr, answer
 
-
+start = time.time()
 correct = 0
-input("Press enter to start!")
-print("----------------------")
 
-t1 = time.time()
+for i in range(int(num_of_questions)):
+    result = problem()
+    print("Question:", colored(result["question"], "blue"))
+    answer = input("Answer: ")
+    if answer == result["answer"]:
+        print(colored("Correct!", "green"))
+        correct += 1
+    else:
+        print(colored("Incorrect!", "red"))
+        print("The answer is", result["answer"])
 
-for i in range(TOTAL):
-    problem()
-    # expr, answer = problem()
-    # while True:
-    #     d = input("Problem -" + str(i + 1) + ": " + expr + " = ")
-    #     if d == str(answer):
-    #         correct += 1
-    #         break
-    #     continue
+    print()
 
-t2 = time.time()
-total_time = round(t2 - t1, 2)
+end = time.time()
 
 print("----------------------")
-print("You finished in", total_time, "seconds!")
-print("accuracy=", (correct / TOTAL) * 100)
+print()
+
+print("You finished in", colored(round(end - start, 2), "green"), "seconds!")
+print(
+    "Your accuracy is",
+    colored(round((correct / int(num_of_questions)) * 100, 2), "blue"),
+)

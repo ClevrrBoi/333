@@ -8,6 +8,9 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.12"
 openai = "^1.6.1"
+questionary = "^2.0.1"
+colorama = "^0.4.6"
+termcolor = "^2.4.0"
 
 
 [build-system]
