@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "333"
+version = "0.1.0"
+description = ""
+authors = ["Anish De <63192115+AnishDe12020@users.noreply.github.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+openai = "^1.6.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
